@@ -1,0 +1,86 @@
+/* Mobile-first bas */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #f5ede0;
+  color: #2c1a0e;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.header {
+  background: #4a2c0e;
+  color: #f5deb3;
+  padding: 24px 20px 20px;
+}
+
+.header h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.header p {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.main {
+  padding: 16px;
+}
+
+.sok-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 2px solid #dcc9a8;
+  background: #fdf6ed;
+  font-size: 16px;
+  color: #2c1a0e;
+}
+
+.status {
+  margin-top: 16px;
+  color: #8a6840;
+  font-size: 14px;
+}
+.bastur-lista {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bastu-kort {
+  background: #fdf6ed;
+  border: 1px solid #dcc9a8;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.bastu-kort h2 {
+  font-size: 17px;
+  margin-bottom: 6px;
+  color: #2c1a0e;
+}
+
+.bastu-kort p {
+  font-size: 14px;
+  color: #8a6840;
+}
+
+.bastu-kort a {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #4a2c0e;
+}
