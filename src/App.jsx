@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-const API_URL = `https://overpass.kumi.systems/api/interpreter?data=[out:json];area["ISO3166-1"="SE"]->.sweden;node["leisure"="sauna"](area.sweden);out body;`
+const API_URL = `https://overpass-api.de/api/interpreter?data=[out:json];area["ISO3166-1"="SE"]->.sweden;(node["leisure"="sauna"](area.sweden);way["leisure"="sauna"](area.sweden););out center;`
 
 function App() {
   const [bastur, setBastur] = useState([])
@@ -31,13 +31,7 @@ function App() {
 }, [])
 
   const basturMedNamn = bastur
-  .filter(b =>
-    b.tags.name && (
-      b.tags.fee ||
-      b.tags.opening_hours ||
-      b.tags.website
-    )
-  )
+  .filter(b => b.tags.name)
   .filter(b =>
     b.tags.name.toLowerCase().includes(sok.toLowerCase())
   )
@@ -59,7 +53,7 @@ function App() {
           onChange={e => setSok(e.target.value)}
         />
 
-        {laddar && <p className="status">Hamtar bastur...</p>}
+        {laddar && <p className="status">Hämtar bastur...</p>}
         {fel && <p className="status">{fel}</p>}
 
         {!laddar && !fel && (
