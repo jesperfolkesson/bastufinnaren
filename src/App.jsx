@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-const API_URL = `https://overpass.kumi.systems/api/interpreter?data=[out:json];area["ISO3166-1"="SE"]->.sweden;node["leisure"="sauna"]["access"="yes"](area.sweden);out body;`
+const API_URL = `https://overpass.kumi.systems/api/interpreter?data=[out:json];area["ISO3166-1"="SE"]->.sweden;node["leisure"="sauna"](area.sweden);out body;`
 
 function App() {
   const [bastur, setBastur] = useState([])
   const [laddar, setLaddar] = useState(true)
   const [fel, setFel] = useState(null)
+  const [sok, setSok] = useState('')
 
   useEffect(() => {
   const sparad = sessionStorage.getItem('bastur')
@@ -29,13 +30,17 @@ function App() {
     })
 }, [])
 
-  const basturMedNamn = bastur.filter(b => 
-  b.tags.name && (
-    b.tags.fee || 
-    b.tags.opening_hours || 
-    b.tags.website
+  const basturMedNamn = bastur
+  .filter(b =>
+    b.tags.name && (
+      b.tags.fee ||
+      b.tags.opening_hours ||
+      b.tags.website
+    )
   )
-)
+  .filter(b =>
+    b.tags.name.toLowerCase().includes(sok.toLowerCase())
+  )
 
   return (
     <div className="app">
@@ -50,6 +55,8 @@ function App() {
           className="sok-input"
           type="text"
           placeholder="Sök stad eller ort..."
+          value={sok}
+          onChange={e => setSok(e.target.value)}
         />
 
         {laddar && <p className="status">Hamtar bastur...</p>}
