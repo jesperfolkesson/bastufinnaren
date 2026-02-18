@@ -1,0 +1,90 @@
+.admin-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background: #f5ede0;
+  min-height: 100vh;
+}
+
+.admin-container h1 {
+  color: #2c1a0e;
+  margin-bottom: 32px;
+  font-size: 28px;
+}
+
+.ingen-data {
+  color: #8a6840;
+  font-style: italic;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.forslag-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.forslag-kort {
+  background: #fdf6ed;
+  border: 2px solid #dcc9a8;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.forslag-kort h2 {
+  margin: 0 0 16px;
+  color: #2c1a0e;
+  font-size: 20px;
+}
+
+.forslag-kort p {
+  margin: 6px 0;
+  color: #4a2c0e;
+  font-size: 14px;
+}
+
+.forslag-kort a {
+  color: #4a2c0e;
+  text-decoration: underline;
+}
+
+.datum {
+  color: #8a6840 !important;
+  font-size: 13px !important;
+  margin-top: 12px !important;
+}
+
+.knappar {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.knappar button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.godkann {
+  background: #7ecfb3;
+  color: #0d1117;
+}
+
+.godkann:hover {
+  background: #6ab89f;
+}
+
+.neka {
+  background: #f85149;
+  color: white;
+}
+
+.neka:hover {
+  background: #d73a33;
+}

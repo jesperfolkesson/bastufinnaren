@@ -1,12 +1,16 @@
 import { supabase } from './supabase'
 import { useState, useEffect } from 'react'
 import './App.css'
+import LäggTillBastu from './LäggTillBastu'
+import Admin from './Admin'
 
 function App() {
   const [bastur, setBastur] = useState([])
   const [laddar, setLaddar] = useState(true)
   const [fel, setFel] = useState(null)
   const [sok, setSok] = useState('')
+  const [visaFormulär, setVisaFormulär] = useState(false)
+  const [visaAdmin, setVisaAdmin] = useState(false)
 
   useEffect(() => {
   async function hamtaBastur() {
@@ -36,13 +40,21 @@ function App() {
 )
 
   return (
-    <div className="app">
+  <div className="app">
+    <header className="header">
+      <h1>Bastufinnaren</h1>
+      <p>Hitta offentliga bastur i Sverige</p>
+      <button 
+        className="admin-knapp"
+        onClick={() => setVisaAdmin(!visaAdmin)}
+      >
+        {visaAdmin ? '← Tillbaka' : '⚙️ Admin'}
+      </button>
+    </header>
 
-      <header className="header">
-        <h1>Bastufinnaren</h1>
-        <p>Hitta offentliga bastur i Sverige</p>
-      </header>
-
+    {visaAdmin ? (
+      <Admin />
+    ) : (
       <main className="main">
         <input
           className="sok-input"
@@ -51,6 +63,13 @@ function App() {
           value={sok}
           onChange={e => setSok(e.target.value)}
         />
+
+        <button 
+          className="lagg-till-knapp"
+          onClick={() => setVisaFormulär(true)}
+        >
+          + Föreslå bastu
+        </button>
 
         {laddar && <p className="status">Hämtar bastur...</p>}
         {fel && <p className="status">{fel}</p>}
@@ -71,11 +90,14 @@ function App() {
             ))}
           </div>
         )}
-
       </main>
+    )}
 
-    </div>
-  )
+    {visaFormulär && (
+      <LäggTillBastu onStäng={() => setVisaFormulär(false)} />
+    )}
+  </div>
+)
 }
 
 export default App

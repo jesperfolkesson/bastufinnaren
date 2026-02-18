@@ -90,3 +90,37 @@ body {
   font-size: 13px;
   margin: 4px 0 8px 0;
 }
+
+.lagg-till-knapp {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: #4a2c0e;
+  color: #f5deb3;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lagg-till-knapp:hover {
+  background: #5c3614;
+}
+
+.admin-knapp {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #f5deb3;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.header {
+  position: relative;
+}
