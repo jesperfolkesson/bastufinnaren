@@ -31,8 +31,9 @@ function App() {
   const basturMedNamn = bastur
   .filter(b => b.name)
   .filter(b =>
-    b.name.toLowerCase().includes(sok.toLowerCase())
-  )
+  b.name.toLowerCase().includes(sok.toLowerCase()) ||
+  (b.stad && b.stad.toLowerCase().includes(sok.toLowerCase()))
+)
 
   return (
     <div className="app">
@@ -60,6 +61,7 @@ function App() {
             {basturMedNamn.map(bastu => (
               <div key={bastu.id} className="bastu-kort">
                 <h2>{bastu.name}</h2>
+                {bastu.stad && <p className="stad">📍 {bastu.stad}</p>}
                 {bastu.fee && <p>Avgift: {bastu.fee}</p>}
                 {bastu.opening_hours && <p>Oppettider: {bastu.opening_hours}</p>}
                 {bastu.website && (
