@@ -1,7 +1,6 @@
+import { supabase } from './supabase'
 import { useState, useEffect } from 'react'
 import './App.css'
-
-const API_URL = `https://overpass-api.de/api/interpreter?data=[out:json];area["ISO3166-1"="SE"]->.sweden;(node["leisure"="sauna"](area.sweden);way["leisure"="sauna"](area.sweden););out center;`
 
 function App() {
   const [bastur, setBastur] = useState([])
@@ -10,30 +9,29 @@ function App() {
   const [sok, setSok] = useState('')
 
   useEffect(() => {
-  const sparad = sessionStorage.getItem('bastur')
-  if (sparad) {
-    setBastur(JSON.parse(sparad))
-    setLaddar(false)
-    return
+  async function hamtaBastur() {
+    const { data, error } = await supabase
+      .from('bastuar')
+      .select('*')
+    
+    if (error) {
+      console.log('Supabase-fel:', error)
+      setFel('Kunde inte hämta bastur från databasen.')
+      setLaddar(false)
+    } else {
+      console.log('Hämtade bastur:', data)
+      setBastur(data)
+      setLaddar(false)
+    }
   }
-
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-      setBastur(data.elements)
-      sessionStorage.setItem('bastur', JSON.stringify(data.elements))
-      setLaddar(false)
-    })
-    .catch(err => {
-      setFel('Kunde inte hämta data. Prova att ladda om sidan.')
-      setLaddar(false)
-    })
+  
+  hamtaBastur()
 }, [])
 
   const basturMedNamn = bastur
-  .filter(b => b.tags.name)
+  .filter(b => b.name)
   .filter(b =>
-    b.tags.name.toLowerCase().includes(sok.toLowerCase())
+    b.name.toLowerCase().includes(sok.toLowerCase())
   )
 
   return (
@@ -61,11 +59,11 @@ function App() {
             <p className="status">{basturMedNamn.length} bastur hittades</p>
             {basturMedNamn.map(bastu => (
               <div key={bastu.id} className="bastu-kort">
-                <h2>{bastu.tags.name}</h2>
-                {bastu.tags.fee && <p>Avgift: {bastu.tags.fee}</p>}
-                {bastu.tags.opening_hours && <p>Oppettider: {bastu.tags.opening_hours}</p>}
-                {bastu.tags.website && (
-                  <a href={bastu.tags.website} target="_blank">Webbplats</a>
+                <h2>{bastu.name}</h2>
+                {bastu.fee && <p>Avgift: {bastu.fee}</p>}
+                {bastu.opening_hours && <p>Oppettider: {bastu.opening_hours}</p>}
+                {bastu.website && (
+                  <a href={bastu.website} target="_blank">Webbplats</a>
                 )}
               </div>
             ))}
