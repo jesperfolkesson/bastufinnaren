@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import LäggTillBastu from './LäggTillBastu'
 import Admin from './Admin'
+import BastuDetalj from './BastuDetalj'
 
 function App() {
   const [bastur, setBastur] = useState([])
@@ -11,6 +12,7 @@ function App() {
   const [sok, setSok] = useState('')
   const [visaFormulär, setVisaFormulär] = useState(false)
   const [visaAdmin, setVisaAdmin] = useState(false)
+  const [valdBastu, setValdBastu] = useState(null)
 
   useEffect(() => {
   async function hamtaBastur() {
@@ -78,14 +80,14 @@ function App() {
           <div className="bastur-lista">
             <p className="status">{basturMedNamn.length} bastur hittades</p>
             {basturMedNamn.map(bastu => (
-              <div key={bastu.id} className="bastu-kort">
+                <div 
+                  key={bastu.id} 
+                  className="bastu-kort" 
+                  onClick={() => setValdBastu(bastu)}
+                  style={{ cursor: 'pointer' }}
+                >
                 <h2>{bastu.name}</h2>
                 {bastu.stad && <p className="stad">📍 {bastu.stad}</p>}
-                {bastu.fee && <p>Avgift: {bastu.fee}</p>}
-                {bastu.opening_hours && <p>Oppettider: {bastu.opening_hours}</p>}
-                {bastu.website && (
-                  <a href={bastu.website} target="_blank">Webbplats</a>
-                )}
               </div>
             ))}
           </div>
@@ -96,6 +98,13 @@ function App() {
     {visaFormulär && (
       <LäggTillBastu onStäng={() => setVisaFormulär(false)} />
     )}
+
+    {valdBastu && (
+  <BastuDetalj 
+    bastu={valdBastu} 
+    onStäng={() => setValdBastu(null)} 
+  />
+)}
   </div>
 )
 }

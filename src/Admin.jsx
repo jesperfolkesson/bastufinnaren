@@ -28,6 +28,22 @@ export default function Admin() {
   async function godkänn(förslag) {
     setLaddar(true)
 
+    const { data: befintlig } = await supabase
+    .from('bastuar')
+    .select('name, stad')
+    .ilike('name', förslag.name)
+    .limit(1)
+
+  if (befintlig && befintlig.length > 0) {
+    const bekräfta = window.confirm(
+      `En bastu med namnet "${förslag.name}" finns redan i ${befintlig[0].stad}.\n\nVill du ändå lägga till denna?`
+    )
+    if (!bekräfta) {
+      setLaddar(false)
+      return
+    }
+  }
+
     // Geocoding: konvertera adress till koordinater
     const coords = await geocodeAddress(förslag.address)
     
