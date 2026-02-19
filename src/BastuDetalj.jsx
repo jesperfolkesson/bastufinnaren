@@ -1,6 +1,7 @@
 import './BastuDetalj.css'
 
 export default function BastuDetalj({ bastu, onStäng }) {
+      console.log('Bastu data:', bastu) // ← LÄGG TILL
   return (
     <div className="modal-backdrop" onClick={onStäng}>
       <div className="detalj-innehall" onClick={e => e.stopPropagation()}>
@@ -8,7 +9,7 @@ export default function BastuDetalj({ bastu, onStäng }) {
         
         <h1>{bastu.name}</h1>
         {bastu.stad && <p className="stad-stor">📍 {bastu.stad}</p>}
-
+        
         <div className="detalj-sektion">
           <h3>Information</h3>
           {bastu.fee ? (
@@ -28,18 +29,21 @@ export default function BastuDetalj({ bastu, onStäng }) {
           )}
         </div>
 
+        {bastu.lat && bastu.lon && (
         <div className="detalj-sektion">
-          <h3>Plats</h3>
-          <p><strong>Koordinater:</strong> {bastu.lat.toFixed(4)}, {bastu.lon.toFixed(4)}</p>
-          <a 
+            <h3>Plats</h3>
+            {bastu.address && <p className="adress">{bastu.address}</p>}
+            <p><strong>Koordinater:</strong> {bastu.lat.toFixed(4)}, {bastu.lon.toFixed(4)}</p>
+            <a 
             href={`https://www.google.com/maps?q=${bastu.lat},${bastu.lon}`}
             target="_blank"
             rel="noopener noreferrer"
             className="karta-länk"
-          >
+            >
             🗺️ Öppna i Google Maps
-          </a>
+            </a>
         </div>
+        )}
       </div>
     </div>
   )

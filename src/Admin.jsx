@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 import './Admin.css'
+import RedigeraForslag from './RedigeraForslag'
 
 export default function Admin() {
   const [förslag, setFörslag] = useState([])
   const [laddar, setLaddar] = useState(true)
+  const [redigerar, setRedigerar] = useState(null)
 
   useEffect(() => {
     hämtaFörslag()
@@ -20,23 +22,37 @@ export default function Admin() {
     if (error) {
       console.error('Fel:', error)
     } else {
+        console.log('Hämtade:', data.length, 'förslag') 
       setFörslag(data)
     }
     setLaddar(false)
   }
 
-  async function godkänn(förslag) {
+  async function godkänn(förslagId) {
     setLaddar(true)
+
+      // Hämta senaste versionen från databasen
+  const { data: aktuellt } = await supabase
+    .from('bastuar_forslag')
+    .select('*')
+    .eq('id', förslagId)
+    .single()
+
+  if (!aktuellt) {
+    alert('Kunde inte hitta förslaget')
+    setLaddar(false)
+    return
+  }
 
     const { data: befintlig } = await supabase
     .from('bastuar')
     .select('name, stad')
-    .ilike('name', förslag.name)
+    .ilike('name', aktuellt.name)
     .limit(1)
 
   if (befintlig && befintlig.length > 0) {
     const bekräfta = window.confirm(
-      `En bastu med namnet "${förslag.name}" finns redan i ${befintlig[0].stad}.\n\nVill du ändå lägga till denna?`
+      `En bastu med namnet "${aktuellt.name}" finns redan i ${befintlig[0].stad}.\n\nVill du ändå lägga till denna?`
     )
     if (!bekräfta) {
       setLaddar(false)
@@ -45,27 +61,25 @@ export default function Admin() {
   }
 
     // Geocoding: konvertera adress till koordinater
-    const coords = await geocodeAddress(förslag.address)
+    const coords = await geocodeAddress(aktuellt.address)
     
-    if (!coords) {
-      alert('Kunde inte hitta koordinater för adressen. Kolla att den är korrekt.')
-      setLaddar(false)
-      return
-    }
+    console.log('Koordinater:', coords) // ← LÄGG TILL
+    console.log('Försöker godkänna:', JSON.stringify(aktuellt, null, 2))
 
     // Lägg till i huvudtabellen
     const { error: insertError } = await supabase
-      .from('bastuar')
-      .insert([{
-        name: förslag.name,
-        lat: coords.lat,
-        lon: coords.lon,
-        stad: förslag.stad,
-        fee: förslag.fee,
-        opening_hours: förslag.opening_hours,
-        website: förslag.website,
+    .from('bastuar')
+    .insert([{
+        name: aktuellt.name,
+        address: aktuellt.address,  // ← LÄGG TILL DENNA RAD
+        lat: coords?.lat || null,
+        lon: coords?.lon || null,
+        stad: aktuellt.stad,
+        fee: aktuellt.fee,
+        opening_hours: aktuellt.opening_hours,
+        website: aktuellt.website,
         osm_id: null
-      }])
+     }])
 
     if (insertError) {
       alert('Fel vid godkännande: ' + insertError.message)
@@ -75,9 +89,13 @@ export default function Admin() {
 
     // Uppdatera status till 'approved'
     await supabase
-      .from('bastuar_forslag')
-      .update({ status: 'approved' })
-      .eq('id', förslag.id)
+        .from('bastuar_forslag')
+        .update({ 
+            status: 'approved',
+            lat: coords?.lat || null,
+            lon: coords?.lon || null
+        })
+        .eq('id', förslagId)
 
     hämtaFörslag()
   }
@@ -94,25 +112,37 @@ export default function Admin() {
   }
 
   async function geocodeAddress(address) {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`,
-        { headers: { 'User-Agent': 'Bastufinnaren/1.0' } }
-      )
-      const data = await response.json()
-      
-      if (data.length > 0) {
-        return {
-          lat: parseFloat(data[0].lat),
-          lon: parseFloat(data[0].lon)
-        }
+  // Försök 1: Exakt adress
+  let coords = await tryGeocode(address)
+  if (coords && coords.lat > 55 && coords.lat < 70) return coords
+  
+  // Försök 2: Adress + ", Sverige"
+  coords = await tryGeocode(address + ', Sverige')
+  if (coords && coords.lat > 55 && coords.lat < 70) return coords
+  
+  return null
+}
+
+async function tryGeocode(query) {
+  try {
+    await new Promise(r => setTimeout(r, 1000)) // Vänta 1 sekund
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
+      { headers: { 'User-Agent': 'Bastufinnaren/1.0' } }
+    )
+    const data = await response.json()
+    
+    if (data.length > 0) {
+      return {
+        lat: parseFloat(data[0].lat),
+        lon: parseFloat(data[0].lon)
       }
-      return null
-    } catch (err) {
-      console.error('Geocoding-fel:', err)
-      return null
     }
+    return null
+  } catch (err) {
+    return null
   }
+}
 
   if (laddar) return <div className="admin-container"><p>Laddar...</p></div>
 
@@ -135,9 +165,17 @@ export default function Admin() {
               <p className="datum">Inskickat: {new Date(f.created_at).toLocaleDateString('sv-SE')}</p>
               
               <div className="knappar">
-                <button className="godkann" onClick={() => godkänn(f)}>✓ Godkänn</button>
+                <button className="redigera" onClick={() => setRedigerar(f)}>✎ Redigera</button>
+                <button className="godkann" onClick={() => godkänn(f.id)}>✓ Godkänn</button>
                 <button className="neka" onClick={() => neka(f.id)}>✕ Neka</button>
               </div>
+              {redigerar && (
+                <RedigeraForslag 
+                    förslag={redigerar} 
+                    onStäng={() => setRedigerar(null)}
+                    onUppdaterad={() => hämtaFörslag()}
+                />
+                )}
             </div>
           ))}
         </div>

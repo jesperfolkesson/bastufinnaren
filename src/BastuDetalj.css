@@ -76,3 +76,9 @@
 .karta-länk:hover {
   background: #5c3614;
 }
+
+.adress {
+  color: #8a6840;
+  font-size: 14px;
+  margin: 8px 0 20px 0;
+}
