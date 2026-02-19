@@ -29,21 +29,25 @@ export default function BastuDetalj({ bastu, onStäng }) {
           )}
         </div>
 
-        {bastu.lat && bastu.lon && (
-        <div className="detalj-sektion">
-            <h3>Plats</h3>
-            {bastu.address && <p className="adress">{bastu.address}</p>}
-            <p><strong>Koordinater:</strong> {bastu.lat.toFixed(4)}, {bastu.lon.toFixed(4)}</p>
-            <a 
-            href={`https://www.google.com/maps?q=${bastu.lat},${bastu.lon}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="karta-länk"
-            >
-            🗺️ Öppna i Google Maps
-            </a>
-        </div>
-        )}
+       {(bastu.address || (bastu.lat && bastu.lon)) && (
+  <div className="detalj-sektion">
+    <h3>Plats</h3>
+    {bastu.address && <p><strong>Adress:</strong> {bastu.address}</p>}
+    {bastu.lat && bastu.lon && (
+      <>
+        <p><strong>Koordinater:</strong> {bastu.lat.toFixed(4)}, {bastu.lon.toFixed(4)}</p>
+        <a 
+          href={`https://www.google.com/maps?q=${bastu.lat},${bastu.lon}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="karta-länk"
+        >
+          🗺️ Öppna i Google Maps
+        </a>
+      </>
+    )}
+  </div>
+)}
       </div>
     </div>
   )

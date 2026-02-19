@@ -11,7 +11,7 @@ if (!stad) {
   process.exit(1)
 }
 
-const CSV_FILE = `src/bastuar_${stad}.csv`
+const CSV_FILE = 'src/bastuar_import.csv'
 
 if (!fs.existsSync(CSV_FILE)) {
   console.error(`❌ Filen ${CSV_FILE} finns inte!`)

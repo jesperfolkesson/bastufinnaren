@@ -147,39 +147,40 @@ async function tryGeocode(query) {
   if (laddar) return <div className="admin-container"><p>Laddar...</p></div>
 
   return (
-    <div className="admin-container">
-      <h1>Admin — Granska förslag</h1>
-      
-      {förslag.length === 0 ? (
-        <p className="ingen-data">Inga förslag väntar på granskning</p>
-      ) : (
-        <div className="forslag-lista">
-          {förslag.map(f => (
-            <div key={f.id} className="forslag-kort">
-              <h2>{f.name}</h2>
-              <p><strong>Adress:</strong> {f.address}</p>
-              <p><strong>Stad:</strong> {f.stad}</p>
-              {f.fee && <p><strong>Avgift:</strong> {f.fee}</p>}
-              {f.opening_hours && <p><strong>Öppettider:</strong> {f.opening_hours}</p>}
-              {f.website && <p><strong>Webbplats:</strong> <a href={f.website} target="_blank">{f.website}</a></p>}
-              <p className="datum">Inskickat: {new Date(f.created_at).toLocaleDateString('sv-SE')}</p>
-              
-              <div className="knappar">
-                <button className="redigera" onClick={() => setRedigerar(f)}>✎ Redigera</button>
-                <button className="godkann" onClick={() => godkänn(f.id)}>✓ Godkänn</button>
-                <button className="neka" onClick={() => neka(f.id)}>✕ Neka</button>
-              </div>
-              {redigerar && (
-                <RedigeraForslag 
-                    förslag={redigerar} 
-                    onStäng={() => setRedigerar(null)}
-                    onUppdaterad={() => hämtaFörslag()}
-                />
-                )}
+  <div className="admin-container">
+    <h1>Admin — Granska förslag</h1>
+    
+    {förslag.length === 0 ? (
+      <p className="ingen-data">Inga förslag väntar på granskning</p>
+    ) : (
+      <div className="forslag-lista">
+        {förslag.map(f => (
+          <div key={f.id} className="forslag-kort">
+            <h2>{f.name}</h2>
+            <p><strong>Adress:</strong> {f.address}</p>
+            <p><strong>Stad:</strong> {f.stad}</p>
+            {f.fee && <p><strong>Avgift:</strong> {f.fee}</p>}
+            {f.opening_hours && <p><strong>Öppettider:</strong> {f.opening_hours}</p>}
+            {f.website && <p><strong>Webbplats:</strong> <a href={f.website} target="_blank">{f.website}</a></p>}
+            <p className="datum">Inskickat: {new Date(f.created_at).toLocaleDateString('sv-SE')}</p>
+            
+            <div className="knappar">
+              <button className="redigera" onClick={() => setRedigerar(f)}>✎ Redigera</button>
+              <button className="godkann" onClick={() => godkänn(f.id)}>✓ Godkänn</button>
+              <button className="neka" onClick={() => neka(f.id)}>✕ Neka</button>
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
+          </div>
+        ))}
+      </div>
+    )}
+
+    {redigerar && (
+      <RedigeraForslag 
+        förslag={redigerar} 
+        onStäng={() => setRedigerar(null)}
+        onUppdaterad={() => hämtaFörslag()}
+      />
+    )}
+  </div>
+    )   
 }
